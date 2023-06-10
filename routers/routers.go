@@ -13,7 +13,7 @@ import (
 
 func SetCollectionRoutes(app fiber.Router, db *sqlx.DB) {
 	customerRepository := repository.NewCustomerRepositoryDB(db)
-	customerService := service.NewCustomerService(customerRepository)
+	customerService := service.NewCollectionService(customerRepository)
 
 	app.Get("/collections", func(c *fiber.Ctx) error {
 		var dataList structs.ListPosts
@@ -44,7 +44,7 @@ func SetCollectionRoutes(app fiber.Router, db *sqlx.DB) {
 
 				dataCount, _ := customerService.GetCollectionService() // จำนวนทั้งหมด
 				dataList.Count = len(dataCount.Posts)                  //ดึงจากก้อน
-				rows, err := customerService.GetCustomerServiceLimit(Offset, Limit)
+				rows, err := customerService.GetServiceLimit(Offset, Limit)
 
 				dataList.Posts = append(dataList.Posts, rows...)
 				dataList.Limit = Limit
@@ -73,7 +73,7 @@ func SetCollectionRoutes(app fiber.Router, db *sqlx.DB) {
 		Params := c.Params("id")
 		// var listPost []structs.Posts
 		if Params != "" {
-			post, err := customerService.GetCustomerServiceById(Params)
+			post, err := customerService.GetCollectionServiceById(Params)
 			if post != nil {
 				c.JSON(post)
 			}
@@ -85,7 +85,7 @@ func SetCollectionRoutes(app fiber.Router, db *sqlx.DB) {
 		}
 		// กรณี ส่งค่าเป็น true & false ต้องไปดึง arr มาแสดง
 		if Params == "true" || Params == "false" {
-			listPost, err := customerService.GetCustomerServiceByListId(Params)
+			listPost, err := customerService.GetCollectionServiceByListId(Params)
 			if listPost != nil {
 				c.JSON(listPost)
 			}
@@ -94,7 +94,7 @@ func SetCollectionRoutes(app fiber.Router, db *sqlx.DB) {
 				return err
 			}
 		} else { //กรณีดึงวันที่ ต้องไปดึง arr มาแสดง
-			listPost, err := customerService.GetCustomerServiceByListId(Params)
+			listPost, err := customerService.GetCollectionServiceByListId(Params)
 			if listPost != nil {
 				c.JSON(listPost)
 			}
@@ -134,7 +134,7 @@ func SetCollectionRoutes(app fiber.Router, db *sqlx.DB) {
 		}
 		if p.Title != "" {
 			customerRepository := repository.NewCustomerRepositoryDB(db)
-			customerService := service.NewCustomerService(customerRepository)
+			customerService := service.NewCollectionService(customerRepository)
 			post, _ := customerService.UpdateCollection(Params, p.Title, p.Content, p.Published)
 			// s.customerRepository.DeleteCollection(id)
 

@@ -14,16 +14,16 @@ import (
 )
 
 // ตัวเชื่อม
-type customerService struct {
+type collectionService struct {
 	collectionRepository repository.CollectionRepository
 }
 
-func NewCustomerService(custRepo repository.CollectionRepository) customerService {
-	return customerService{collectionRepository: custRepo}
+func NewCollectionService(custRepo repository.CollectionRepository) collectionService {
+	return collectionService{collectionRepository: custRepo}
 }
 
 // GET ALL
-func (s customerService) GetCustomerService() ([]structs.Posts, error) {
+func (s collectionService) GetCollection() ([]structs.Posts, error) {
 	PostsRes := []structs.Posts{}
 	postsDB, err := s.collectionRepository.GetAll()
 	if err != nil {
@@ -51,10 +51,10 @@ func (s customerService) GetCustomerService() ([]structs.Posts, error) {
 }
 
 // GET
-func (s customerService) GetCollectionService() (structs.ListPosts ,error) {
+func (s collectionService) GetCollectionService() (structs.ListPosts ,error) {
 	var dataList structs.ListPosts
 	// app := fiber.New()
-	rows, _ := s.GetCustomerService()
+	rows, _ := s.GetCollection()
 	if len(rows) > 0 {
 
 		dataList.Posts = rows
@@ -76,7 +76,7 @@ func (s customerService) GetCollectionService() (structs.ListPosts ,error) {
 }
 
 // GET ID
-func (s customerService) GetCustomerServiceById(id string) (*structs.Posts, error) {
+func (s collectionService) GetCollectionServiceById(id string) (*structs.Posts, error) {
 	// var CustomerResponseInfo CustomerResponse
 	var Posts structs.Posts
 	postsDBByID, err := s.collectionRepository.GetById(id)
@@ -127,7 +127,7 @@ func (s customerService) GetCustomerServiceById(id string) (*structs.Posts, erro
 }
 
 // GET BY ID LIST
-func (s customerService) GetCustomerServiceByListId(id string) ([]structs.Posts, error) {
+func (s collectionService) GetCollectionServiceByListId(id string) ([]structs.Posts, error) {
 
 	var listPosts []structs.Posts
 	var PostsInfo structs.Posts
@@ -171,7 +171,7 @@ func (s customerService) GetCustomerServiceByListId(id string) ([]structs.Posts,
 }
 
 // Create
-func (s customerService) CreateNewCollection(title, content string, published bool) (*structs.Posts, error) {
+func (s collectionService) CreateNewCollection(title, content string, published bool) (*structs.Posts, error) {
 
 	var Posts structs.Posts
 	s.collectionRepository.CreateNewCollection(title, content, published) //ใส่ข้อมูลเข้า
@@ -192,7 +192,7 @@ func (s customerService) CreateNewCollection(title, content string, published bo
 }
 
 // Update
-func (s customerService) UpdateCollection(id, title, content string, published bool) (*structs.Posts, error) {
+func (s collectionService) UpdateCollection(id, title, content string, published bool) (*structs.Posts, error) {
 
 	var Posts structs.Posts
 	s.collectionRepository.UpdateCollection(id, title, content, published) //ใส่ข้อมูลเข้า
@@ -212,35 +212,17 @@ func (s customerService) UpdateCollection(id, title, content string, published b
 }
 
 // Delete
-func (s customerService) DeleteCollection(id string) error {
-	// var c *fiber.Ctx
-	// var Posts structs.Posts
+func (s collectionService) DeleteCollection(id string) error {
 	s.collectionRepository.DeleteCollection(id) //ใส่ข้อมูลเข้า
-	// database, _ := s.collectionRepository.GetById(id)                        //นำมาแสดงออก
-	// fmt.Println("Create::", Create)
-	// if &database != nil {
-	// 		Posts.Id = &database.Id
-	// ss := "Delete" + ":" + "UUID : " + id
-	// Posts.Title = ss
+
 	return nil
 }
 
-// 	// c.BodyParser(&Posts)
-// 	// 		Posts.Content = database.Content
-// 	// 		Posts.Published = database.Published
-// 	// 		Posts.ViewCount = &database.ViewCount
-// 	// 		Posts.CreatedAt = &database.CreatedAt
-// 	// 		Posts.UpdatedAt = &database.UpdatedAt
-// 	// }
-// 	// return nil, c.JSON(Posts)
-// 	return nil
-
-// }
 
 // GET
-func (s customerService) GetCollectionServiceLimit(page,limit int) structs.ListPosts {
+func (s collectionService) GetCollectionServiceLimit(page,limit int) structs.ListPosts {
 	var dataList structs.ListPosts
-	rows,_ := s.GetCustomerServiceLimit(page,limit)
+	rows,_ := s.GetServiceLimit(page,limit)
 
 	// rows, _ := s.GetCustomerService()
 	if len(rows) > 0 {
@@ -263,7 +245,7 @@ func (s customerService) GetCollectionServiceLimit(page,limit int) structs.ListP
 	}
 }
 // GET Limit
-func (s customerService) GetCustomerServiceLimit(page,limit int) ([]structs.Posts, error) {
+func (s collectionService) GetServiceLimit(page,limit int) ([]structs.Posts, error) {
 	PostsRes := []structs.Posts{}
 	postsDB, err := s.collectionRepository.LimitCollection(page,limit)
 	if err != nil {
