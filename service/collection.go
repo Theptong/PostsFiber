@@ -4,7 +4,7 @@ import "workshop/structs"
 
 type CollectionService interface {
 	GetCollection() ([]structs.Posts, error)
-	GetCollectionService() (structs.ListPosts)
+	GetCollectionService() (structs.ListPosts,error)
 	GetCollectionServiceById(id string) (*structs.Posts, error)
 	GetCollectionServiceByListId(id string) ([]structs.Posts, error)
 	CreateNewCollection(title, content string, published bool) (*structs.Posts, error)
