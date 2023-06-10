@@ -2,7 +2,7 @@ package repository
 
 import "workshop/structs"
 
-type CustomerRepository interface {
+type CollectionRepository interface {
 	GetAll() ([]structs.PostsDB, error)
 	GetById(id string) (*structs.PostsDB, error)
 	GetByTitle(id string) (*structs.PostsDB, error)
@@ -12,4 +12,5 @@ type CustomerRepository interface {
 	CreateNewCollection(title, content string, published bool) (*structs.PostsDB, error)
 	UpdateCollection(id,title, content string, published bool) (*structs.PostsDB, error)
 	DeleteCollection(id string) (*structs.PostsDB, error)
+	LimitCollection(page int,limit int) ([]structs.PostsDB, error)
 }

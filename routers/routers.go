@@ -2,7 +2,7 @@ package routers
 
 import (
 	"fmt"
-	"log"
+	"strconv"
 	"workshop/repository"
 	"workshop/service"
 	"workshop/structs"
@@ -12,24 +12,59 @@ import (
 )
 
 func SetCollectionRoutes(app fiber.Router, db *sqlx.DB) {
-	// ctrls := controller.NewCollectionsRepositoryDB(db)
 	customerRepository := repository.NewCustomerRepositoryDB(db)
 	customerService := service.NewCustomerService(customerRepository)
-	// customerHandler := handler.NewCustomerHandler(customerService)
 
-	// var c *fiber.Ctx
-	// Maw := customerHandler.GETABC(c)
-	// fmt.Println("Maw::",Maw)
-	//
-	// maw := customerHandler.GetCustomers(c)
-	// fmt.Println("maw:",maw)
-	//
-	// customerHandler.GetCustomers(c)
 	app.Get("/collections", func(c *fiber.Ctx) error {
-		list := customerService.GetCollectionService()
-		err := c.JSON(list)
+		var dataList structs.ListPosts
+		limit := c.Query("limit")
+		page := c.Query("page")
+
+		post, err := customerService.GetCollectionService()
+		// dataList.Count = len(post.Posts) //จะเอาไว้ตรงนี้ก็ได้ แต่จะย้อนกลับมาดูไม่รู้เรื่อง
+		if &post != nil {
+			c.JSON(post)
+		}
 		if err != nil {
-			panic(err)
+			fmt.Println("error")
+			// err := c.Next()
+			return err
+		}
+		//
+		if limit != "" || page == "" {
+			Limit, _ := strconv.Atoi(limit)
+			Page, _ := strconv.Atoi(page)
+			Offset := 0
+			if Page >= 0 {
+				Offset = (Page - 1) * Limit
+			} else {
+				Offset = 0
+			}
+			if Limit > 0 {
+
+				dataCount, _ := customerService.GetCollectionService() // จำนวนทั้งหมด
+				dataList.Count = len(dataCount.Posts)                  //ดึงจากก้อน
+				rows, err := customerService.GetCustomerServiceLimit(Offset, Limit)
+
+				dataList.Posts = append(dataList.Posts, rows...)
+				dataList.Limit = Limit
+				dataList.Page = Page
+				total := (dataList.Count / dataList.Limit)
+
+				remainder := (dataList.Count % dataList.Limit)
+				if remainder == 0 {
+					dataList.TotalPage = total
+				} else {
+					dataList.TotalPage = total + 1
+				}
+				if &dataList != nil {
+					c.JSON(dataList)
+				}
+				if err != nil {
+					fmt.Println("error")
+					return err
+				}
+			}
 		}
 		return nil
 	})
@@ -73,20 +108,22 @@ func SetCollectionRoutes(app fiber.Router, db *sqlx.DB) {
 		return nil
 	})
 	app.Post("/collections", func(c *fiber.Ctx) error {
+
 		p := new(structs.Posts)
 		if err := c.BodyParser(p); err != nil {
 			return err
 		}
-		log.Println(p.Title)   // john
-		log.Println(p.Content) // doe
-		Post, err := customerService.CreateNewCollection(p.Title, p.Content, p.Published)
-		if err != nil {
-			panic(err)
+		if p.Title != "" {
+			posts, err := customerService.CreateNewCollection(p.Title, p.Content, p.Published)
+			if err != nil {
+				panic(err)
+			}
+			return c.JSON(posts)
 		}
-		if Post != nil {
-			c.JSON(Post)
-		}
-		return nil
+
+		required := "error : title is required"
+
+		return c.JSON(required)
 	})
 
 	app.Patch("/collections/:id", func(c *fiber.Ctx) error {
@@ -95,19 +132,19 @@ func SetCollectionRoutes(app fiber.Router, db *sqlx.DB) {
 		if err := c.BodyParser(p); err != nil {
 			return err
 		}
-		// var listPost []structs.Posts
-		if Params != "" {
-			post, err := customerService.UpdateCollection(Params, p.Title, p.Content, p.Published)
-			if post != nil {
-				c.JSON(post)
-			}
-			if err != nil {
-				fmt.Println("error")
-				// err := c.Next()
-				return err
-			}
+		if p.Title != "" {
+			customerRepository := repository.NewCustomerRepositoryDB(db)
+			customerService := service.NewCustomerService(customerRepository)
+			post, _ := customerService.UpdateCollection(Params, p.Title, p.Content, p.Published)
+			// s.customerRepository.DeleteCollection(id)
+
+			c.BodyParser(&post) // "{"Text":"do something"}"
+
+			return c.JSON(post)
 		}
-		return nil
+
+		required := "error : title is required"
+		return c.JSON(required)
 	})
 
 	app.Delete("/collections/:id", func(c *fiber.Ctx) error {

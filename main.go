@@ -55,20 +55,18 @@ func main() {
 	}
 	_ = db
 
+	// app.Post("/", func(c *fiber.Ctx) error {
+	// 	todoForm := struct {
+	// 		Text string `json:"text"`
+	// 	}{}
 
-		// app.Post("/", func(c *fiber.Ctx) error {
-		// 	todoForm := struct {
-		// 		Text string `json:"text"`
-		// 	}{}
-			
-		// 	c.BodyParser(&todoForm) // "{"Text":"do something"}"
-	
-		// 	return c.JSON(todoForm)
-		// })
+	// 	c.BodyParser(&todoForm) // "{"Text":"do something"}"
 
-	
+	// 	return c.JSON(todoForm)
+	// })
+
 	api := app.Group("/api")
-	
+
 	routers.SetCollectionRoutes(api, db)
 
 	app.Get("/error", func(c *fiber.Ctx) error {
