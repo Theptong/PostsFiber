@@ -11,6 +11,34 @@ import (
 	"github.com/spf13/viper"
 )
 
+// // Header —
+// type Header struct {
+// 	Key   string
+// 	Value string
+// }
+
+// // Response —
+// type Response struct {
+// 	Headers []Header
+// }
+
+// func helloHandler(c *fiber.Ctx) {
+// 	var response = &Response{
+// 		Headers: []Header{
+// 			{
+// 				Key:   "Content-Type",
+// 				Value: "application/json",
+// 			},
+// 		},
+// 	}
+
+// 	for _, responseHeader := range response.Headers {
+// 		c.Set(responseHeader.Key, responseHeader.Value)
+// 	}
+
+// 	c.SendString("OKOK")
+// }
+
 func main() {
 	initConfig()
 	app := fiber.New()
@@ -27,7 +55,20 @@ func main() {
 	}
 	_ = db
 
+
+		// app.Post("/", func(c *fiber.Ctx) error {
+		// 	todoForm := struct {
+		// 		Text string `json:"text"`
+		// 	}{}
+			
+		// 	c.BodyParser(&todoForm) // "{"Text":"do something"}"
+	
+		// 	return c.JSON(todoForm)
+		// })
+
+	
 	api := app.Group("/api")
+	
 	routers.SetCollectionRoutes(api, db)
 
 	app.Get("/error", func(c *fiber.Ctx) error {

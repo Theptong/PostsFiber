@@ -1,4 +1,4 @@
-package controller
+package database
 
 import (
 	"workshop/structs"
@@ -22,26 +22,6 @@ func (r collectionsRepositoryDB) GetAll() ([]structs.Posts, error) {
 		return nil, err
 	}
 	return collections, nil
-}
-
-// GET
-func (r collectionsRepositoryDB) GetCollection() structs.ListPosts {
-	var dataList structs.ListPosts
-	rows, _ := r.GetAll()
-
-	dataList.Posts = rows
-	dataList.Count = len(rows)
-	dataList.Limit = len(rows)
-	total := (dataList.Count / dataList.Limit)
-	dataList.Page = total
-	remainder := (dataList.Count % dataList.Limit)
-	if remainder == 0 {
-		dataList.TotalPage = total
-	} else {
-		dataList.TotalPage = total + 1
-	}
-
-	return dataList
 }
 
 func (r collectionsRepositoryDB) GetById(id string) (*structs.PostsDB, error) {
