@@ -122,3 +122,17 @@ func (r customerRepositoryDB) LimitCollection(Offset, Limit int) ([]structs.Post
 	return customers, nil
 	
 }
+
+func (r customerRepositoryDB) ViewCountCollection(ViewCount int,id string) (*structs.PostsDB, error) {
+	var customers structs.PostsDB
+	query := `update posts
+	set view_count = $1
+	where id = $2`
+	err := r.db.Get(&customers, query, ViewCount, id)
+
+	if err != nil {
+		return nil, err
+	}
+	return &customers, nil
+	
+}

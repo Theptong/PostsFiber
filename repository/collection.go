@@ -13,4 +13,5 @@ type CollectionRepository interface {
 	UpdateCollection(id,title, content string, published bool) (*structs.PostsDB, error)
 	DeleteCollection(id string) (*structs.PostsDB, error)
 	LimitCollection(page int,limit int) ([]structs.PostsDB, error)
+	ViewCountCollection(ViewCount int,id string) (*structs.PostsDB, error)
 }

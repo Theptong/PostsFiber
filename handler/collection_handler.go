@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"workshop/repository"
 	"workshop/service"
 	"workshop/structs"
@@ -17,22 +18,24 @@ func NewCustomerHandler(custSrv service.CollectionService) collectionHandler {
 	return collectionHandler{collectionService: custSrv}
 }
 
-func (ch collectionHandler) Create(c *fiber.Ctx, db *sqlx.DB) error {
+
+func (ch collectionHandler) Create(c *fiber.Ctx, db *sqlx.DB) (*structs.Posts, error) {
 	customerRepository := repository.NewCustomerRepositoryDB(db)
 	customerService := service.NewCollectionService(customerRepository)
 	p := new(structs.Posts)
-	if err := c.BodyParser(p); err != nil {
-		return err
-	}
+	// if err := c.BodyParser(p); err != nil {
+	// 	return err
+	// }
 	if p.Title != "" {
 		posts, err := customerService.CreateNewCollection(p.Title, p.Content, p.Published)
 		if err != nil {
-			// panic(err)
+			panic(err)
 		}
-		return c.JSON(posts)
+		fmt.Println("posts;",posts)
+		return posts,c.JSON(posts)
 	}
 
-	required := "error : title is required"
+	// required := "error : title is required"
 
-	return c.JSON(required)
+	return nil,nil
 }

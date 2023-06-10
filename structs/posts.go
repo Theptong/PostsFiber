@@ -19,7 +19,7 @@ type Posts struct {
 	Title     string    `json:"title,omitempty"`
 	Content   string    `json:"content,omitempty"`
 	Published bool      `json:"published,omitempty"`
-	ViewCount *int       `json:"view_count,omitempty"`
+	ViewCount int       `json:"view_count,omitempty"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 }

@@ -40,7 +40,7 @@ func (s collectionService) GetCollection() ([]structs.Posts, error) {
 			Posts.Title = obj.Title
 			Posts.Content = obj.Content
 			Posts.Published = obj.Published
-			Posts.ViewCount = &obj.ViewCount
+			Posts.ViewCount = obj.ViewCount
 			Posts.CreatedAt = &obj.CreatedAt
 			Posts.UpdatedAt = &obj.UpdatedAt
 			PostsRes = append(PostsRes, Posts)
@@ -51,7 +51,7 @@ func (s collectionService) GetCollection() ([]structs.Posts, error) {
 }
 
 // GET
-func (s collectionService) GetCollectionService() (structs.ListPosts ,error) {
+func (s collectionService) GetCollectionService() (structs.ListPosts, error) {
 	var dataList structs.ListPosts
 	// app := fiber.New()
 	rows, _ := s.GetCollection()
@@ -68,16 +68,17 @@ func (s collectionService) GetCollectionService() (structs.ListPosts ,error) {
 		} else {
 			dataList.TotalPage = total + 1
 		}
-		return dataList ,nil
+		return dataList, nil
 	} else {
 		dataList := structs.ListPosts{}
-		return dataList,nil
+		return dataList, nil
 	}
 }
 
 // GET ID
 func (s collectionService) GetCollectionServiceById(id string) (*structs.Posts, error) {
-	// var CustomerResponseInfo CustomerResponse
+	s.UpdateCollectionByViewCount(id)
+
 	var Posts structs.Posts
 	postsDBByID, err := s.collectionRepository.GetById(id)
 	postsDBTitle, _ := s.collectionRepository.GetByTitle(id)
@@ -95,10 +96,12 @@ func (s collectionService) GetCollectionServiceById(id string) (*structs.Posts, 
 
 		if postsDBByID != nil {
 			Posts.Id = &postsDBByID.Id
+			
+			
 			Posts.Title = postsDBByID.Title
 			Posts.Content = postsDBByID.Content
 			Posts.Published = postsDBByID.Published
-			Posts.ViewCount = &postsDBByID.ViewCount
+			Posts.ViewCount = postsDBByID.ViewCount
 			Posts.CreatedAt = &postsDBByID.CreatedAt
 			Posts.UpdatedAt = &postsDBByID.UpdatedAt
 		} else if postsDBTitle != nil {
@@ -106,7 +109,7 @@ func (s collectionService) GetCollectionServiceById(id string) (*structs.Posts, 
 			Posts.Title = postsDBTitle.Title
 			Posts.Content = postsDBTitle.Content
 			Posts.Published = postsDBTitle.Published
-			Posts.ViewCount = &postsDBTitle.ViewCount
+			Posts.ViewCount = postsDBTitle.ViewCount
 			Posts.CreatedAt = &postsDBTitle.CreatedAt
 			Posts.UpdatedAt = &postsDBTitle.UpdatedAt
 		} else if postsDBContent != nil {
@@ -114,7 +117,7 @@ func (s collectionService) GetCollectionServiceById(id string) (*structs.Posts, 
 			Posts.Title = postsDBContent.Title
 			Posts.Content = postsDBContent.Content
 			Posts.Published = postsDBContent.Published
-			Posts.ViewCount = &postsDBContent.ViewCount
+			Posts.ViewCount = postsDBContent.ViewCount
 			Posts.CreatedAt = &postsDBContent.CreatedAt
 			Posts.UpdatedAt = &postsDBContent.UpdatedAt
 		}
@@ -124,6 +127,31 @@ func (s collectionService) GetCollectionServiceById(id string) (*structs.Posts, 
 		return &Posts, nil
 	}
 
+}
+
+// Update view_count
+func (s collectionService) UpdateCollectionByViewCount(id string) (structs.Posts, error) {
+	var dataPosts structs.Posts
+	ViewCount := 0
+	data, _ := s.collectionRepository.GetAll()
+	// if len(data) > 0 {
+	for _, obj := range data {
+		if id == fmt.Sprint(obj.Id) {
+			if obj.Published == true {
+				ViewCount = obj.ViewCount + 1
+				s.collectionRepository.ViewCountCollection(ViewCount, id)
+				dataPosts.Id = &obj.Id
+				dataPosts.Title = obj.Title
+				dataPosts.Content = obj.Content
+				dataPosts.Published = obj.Published
+				dataPosts.ViewCount = obj.ViewCount
+				dataPosts.CreatedAt = &obj.CreatedAt
+				dataPosts.UpdatedAt = &obj.UpdatedAt
+			}
+		}
+	}
+
+	return dataPosts, nil
 }
 
 // GET BY ID LIST
@@ -141,7 +169,7 @@ func (s collectionService) GetCollectionServiceByListId(id string) ([]structs.Po
 				PostsInfo.Title = obj.Title
 				PostsInfo.Content = obj.Content
 				PostsInfo.Published = obj.Published
-				PostsInfo.ViewCount = &obj.ViewCount
+				PostsInfo.ViewCount = obj.ViewCount
 				PostsInfo.CreatedAt = &obj.CreatedAt
 				PostsInfo.UpdatedAt = &obj.UpdatedAt
 
@@ -160,7 +188,7 @@ func (s collectionService) GetCollectionServiceByListId(id string) ([]structs.Po
 				PostsInfo.Title = obj.Title
 				PostsInfo.Content = obj.Content
 				PostsInfo.Published = obj.Published
-				PostsInfo.ViewCount = &obj.ViewCount
+				PostsInfo.ViewCount = obj.ViewCount
 				PostsInfo.CreatedAt = &obj.CreatedAt
 				PostsInfo.UpdatedAt = &obj.UpdatedAt
 				listPosts = append(listPosts, PostsInfo)
@@ -183,7 +211,7 @@ func (s collectionService) CreateNewCollection(title, content string, published 
 		Posts.Title = ObJ.Title
 		Posts.Content = ObJ.Content
 		Posts.Published = ObJ.Published
-		Posts.ViewCount = &ObJ.ViewCount
+		Posts.ViewCount = ObJ.ViewCount
 		Posts.CreatedAt = &ObJ.CreatedAt
 		Posts.UpdatedAt = &ObJ.UpdatedAt
 	}
@@ -203,7 +231,7 @@ func (s collectionService) UpdateCollection(id, title, content string, published
 		Posts.Title = database.Title
 		Posts.Content = database.Content
 		Posts.Published = database.Published
-		Posts.ViewCount = &database.ViewCount
+		Posts.ViewCount = database.ViewCount
 		Posts.CreatedAt = &database.CreatedAt
 		Posts.UpdatedAt = &database.UpdatedAt
 	}
@@ -218,11 +246,10 @@ func (s collectionService) DeleteCollection(id string) error {
 	return nil
 }
 
-
 // GET
-func (s collectionService) GetCollectionServiceLimit(page,limit int) structs.ListPosts {
+func (s collectionService) GetCollectionServiceLimit(page, limit int) structs.ListPosts {
 	var dataList structs.ListPosts
-	rows,_ := s.GetServiceLimit(page,limit)
+	rows, _ := s.GetServiceLimit(page, limit)
 
 	// rows, _ := s.GetCustomerService()
 	if len(rows) > 0 {
@@ -244,10 +271,11 @@ func (s collectionService) GetCollectionServiceLimit(page,limit int) structs.Lis
 		return dataList
 	}
 }
+
 // GET Limit
-func (s collectionService) GetServiceLimit(page,limit int) ([]structs.Posts, error) {
+func (s collectionService) GetServiceLimit(page, limit int) ([]structs.Posts, error) {
 	PostsRes := []structs.Posts{}
-	postsDB, err := s.collectionRepository.LimitCollection(page,limit)
+	postsDB, err := s.collectionRepository.LimitCollection(page, limit)
 	if err != nil {
 		log.Panicln(err)
 		// panic(err)
@@ -262,7 +290,7 @@ func (s collectionService) GetServiceLimit(page,limit int) ([]structs.Posts, err
 			Posts.Title = obj.Title
 			Posts.Content = obj.Content
 			Posts.Published = obj.Published
-			Posts.ViewCount = &obj.ViewCount
+			Posts.ViewCount = obj.ViewCount
 			Posts.CreatedAt = &obj.CreatedAt
 			Posts.UpdatedAt = &obj.UpdatedAt
 			PostsRes = append(PostsRes, Posts)
