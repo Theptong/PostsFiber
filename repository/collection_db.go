@@ -92,7 +92,7 @@ func (r customerRepositoryDB) CreateNewCollection(title, content string, publish
 func (r customerRepositoryDB) UpdateCollection(id, title, content string, published bool) (*structs.PostsDB, error) {
 	var customers structs.PostsDB
 	query := `update posts
-	set title = $2 , content = $3 , published = $4
+	set title = $2 , content = $3 , published = $4 ,updated_at = current_timestamp
 	where id = $1`
 	err := r.db.Get(&customers, query, id, title, content, published)
 	if err != nil {
