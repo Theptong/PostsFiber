@@ -92,12 +92,9 @@ func (s collectionService) GetCollectionServiceById(id string) (*structs.Posts, 
 	}
 
 	if postsDBByID != nil || postsDBTitle != nil || postsDBContent != nil {
-		// CustomerRes := []CustomerResponse{}
 
 		if postsDBByID != nil {
 			Posts.Id = &postsDBByID.Id
-			
-			
 			Posts.Title = postsDBByID.Title
 			Posts.Content = postsDBByID.Content
 			Posts.Published = postsDBByID.Published
@@ -160,7 +157,7 @@ func (s collectionService) GetCollectionServiceByListId(id string) ([]structs.Po
 	var listPosts []structs.Posts
 	var PostsInfo structs.Posts
 
-	if id == "ture" || id == "false" {
+	if id == "true" || id == "false" {
 		postsDBPublished, _ := s.collectionRepository.GetByPublished(id)
 		if postsDBPublished != nil {
 
@@ -204,16 +201,15 @@ func (s collectionService) CreateNewCollection(title, content string, published 
 	var Posts structs.Posts
 	s.collectionRepository.CreateNewCollection(title, content, published) //ใส่ข้อมูลเข้า
 	database, _ := s.collectionRepository.GetAll()                        //นำมาแสดงออก
-	ObJ := database[len(database)-1]
-	// fmt.Println("Create::", Create)
-	if &ObJ != nil {
-		Posts.Id = &ObJ.Id
-		Posts.Title = ObJ.Title
-		Posts.Content = ObJ.Content
-		Posts.Published = ObJ.Published
-		Posts.ViewCount = ObJ.ViewCount
-		Posts.CreatedAt = &ObJ.CreatedAt
-		Posts.UpdatedAt = &ObJ.UpdatedAt
+	Obj := database[len(database)-1]
+	if &Obj != nil {
+		Posts.Id = &Obj.Id
+		Posts.Title = Obj.Title
+		Posts.Content = Obj.Content
+		Posts.Published = Obj.Published
+		Posts.ViewCount = Obj.ViewCount
+		Posts.CreatedAt = &Obj.CreatedAt
+		Posts.UpdatedAt = &Obj.UpdatedAt
 	}
 	return &Posts, nil
 
@@ -224,8 +220,9 @@ func (s collectionService) UpdateCollection(id, title, content string, published
 
 	var Posts structs.Posts
 	s.collectionRepository.UpdateCollection(id, title, content, published) //ใส่ข้อมูลเข้า
+	// database, _ := s.GetCollectionServiceById(id)
 	database, _ := s.collectionRepository.GetById(id)                      //นำมาแสดงออก
-	// fmt.Println("Create::", Create)
+	// // fmt.Println("Create::", Create)
 	if &database != nil {
 		Posts.Id = &database.Id
 		Posts.Title = database.Title
@@ -234,6 +231,7 @@ func (s collectionService) UpdateCollection(id, title, content string, published
 		Posts.ViewCount = database.ViewCount
 		Posts.CreatedAt = &database.CreatedAt
 		Posts.UpdatedAt = &database.UpdatedAt
+
 	}
 	return &Posts, nil
 
@@ -242,7 +240,7 @@ func (s collectionService) UpdateCollection(id, title, content string, published
 // Delete
 func (s collectionService) DeleteCollection(id string) error {
 	s.collectionRepository.DeleteCollection(id) //ใส่ข้อมูลเข้า
-
+	
 	return nil
 }
 
@@ -278,8 +276,8 @@ func (s collectionService) GetServiceLimit(page, limit int) ([]structs.Posts, er
 	postsDB, err := s.collectionRepository.LimitCollection(page, limit)
 	if err != nil {
 		log.Panicln(err)
-		// panic(err)
-		return nil, err
+		panic(err)
+		// return nil, err
 	}
 
 	var Posts structs.Posts

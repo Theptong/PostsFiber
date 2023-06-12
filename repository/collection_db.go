@@ -17,7 +17,7 @@ func NewCustomerRepositoryDB(db *sqlx.DB) customerRepositoryDB {
 
 func (r customerRepositoryDB) GetAll() ([]structs.PostsDB, error) {
 	var customers []structs.PostsDB
-	query := `select * from posts`
+	query := `select * from posts ORDER BY created_at ASC;`
 	err := r.db.Select(&customers, query)
 	if err != nil {
 		return nil, err
