@@ -2,7 +2,10 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"time"
+
+	// "time"
 	"workshop/repository"
 )
 
@@ -20,6 +23,7 @@ func NewPromotionService(promoRepo repository.PromotionRepository) promotionServ
 
 func (p promotionService) GetCollectionById(id string) (string, error) {
 
+	fmt.Println("id::", id)
 	if id == "" {
 		return "", errors.New("don't found id")
 	}
@@ -33,93 +37,96 @@ func (p promotionService) GetCollectionById(id string) (string, error) {
 	return id, nil
 }
 
-func (p promotionService) GetCollection(id string) ([]repository.MockPosts, error) {
+func (p promotionService) GetCollection(data []repository.MockPosts) ([]repository.MockPosts, error) {
 	dateString := "2023-06-14"
 	date, _ := time.Parse("2006-01-02", dateString)
-	mockData := []repository.MockPosts{}
+	listMock := []repository.MockPosts{}
+	mock := repository.MockPosts{}
 	cases := []repository.MockPosts{
 		{Id: "123", Title: "title123", Content: "Content123", Published: true, ViewCount: 0, CreatedAt: date, UpdatedAt: date},
-		// {Id: "456", Title: "456", Content: "456", Published: true, ViewCount: 0, CreatedAt: date, UpdatedAt: date},
-		// {Id: "789", Title: "789", Content: "789", Published: true, ViewCount: 0, CreatedAt: time.Now(), UpdatedAt: time.Now()},
-		// {Id: "", Title: "", Content: "", Published: false, ViewCount: 0, CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{Id: "456", Title: "456", Content: "456", Published: true, ViewCount: 0, CreatedAt: date, UpdatedAt: date},
 	}
-
-	if id != "" {
-		for _, obj := range cases {
-			if obj.Id == id {
-				mockData = append(mockData, obj)
-				return mockData, nil
+	for _, obj := range data {
+		for _, obj2 := range cases {
+			if obj == obj2 {
+				mock = obj
+				listMock = append(listMock, mock)
 			}
 		}
 	}
 
-	return cases, nil
+	return listMock, nil
 }
 
-func (p promotionService) CreateCollection() (repository.MockPosts, error) {
-	var data repository.MockPosts
-	dateString := "2023-06-14"
-	date, _ := time.Parse("2006-01-02", dateString)
-	Id := "123"
-	Title := "title123"
-	Content := "Content123"
-	Published := true
-	ViewCount := 0
-	CreatedAt := date
-	UpdatedAt := date
+// func (p promotionService) CreateCollection(id string) (repository.MockPosts, error) {
+// 	var data repository.MockPosts
+// 	dateString := "2023-06-14"
+// 	date, _ := time.Parse("2006-01-02", dateString)
+// 	Id := "123"
+// 	Title := "title123"
+// 	Content := "Content123"
+// 	Published := true
+// 	ViewCount := 0
+// 	CreatedAt := date
+// 	UpdatedAt := date
 
-	data.Id = Id
-	data.Title = Title
-	data.Content = Content
-	data.Published = Published
-	data.ViewCount = ViewCount
-	data.CreatedAt = CreatedAt
-	data.UpdatedAt = UpdatedAt
+	
 
-	return data, nil
-}
+// 	if id == Id {
+// 	data.Id = Id
+// 	data.Title = Title
+// 	data.Content = Content
+// 	data.Published = Published
+// 	data.ViewCount = ViewCount
+// 	data.CreatedAt = CreatedAt
+// 	data.UpdatedAt = UpdatedAt
+// 		return data, nil
+// 	}
 
-func (p promotionService) UpdateCollection() (repository.MockPosts, error) {
-	var data repository.MockPosts
-	dateString := "2023-06-14"
-	date, _ := time.Parse("2006-01-02", dateString)
-	Id := "123"
-	Title := "title123"
-	Content := "Content123"
-	Published := true
-	ViewCount := 0
-	CreatedAt := date
-	UpdatedAt := date
+// 	return data, nil
+// }
 
-	data.Id = Id
-	data.Title = Title
-	data.Content = Content
-	data.Published = Published
-	data.ViewCount = ViewCount
-	data.CreatedAt = CreatedAt
-	data.UpdatedAt = UpdatedAt
+// func (p promotionService) UpdateCollection() (repository.MockPosts, error) {
+// 	var data repository.MockPosts
+// 	dateString := "2023-06-14"
+// 	date, _ := time.Parse("2006-01-02", dateString)
+// 	Id := "123"
+// 	Title := "title123"
+// 	Content := "Content123"
+// 	Published := true
+// 	ViewCount := 0
+// 	CreatedAt := date
+// 	UpdatedAt := date
 
-	return data, nil
-}
-func (p promotionService) DeleteCollection() (repository.MockPosts, error) {
-	var data repository.MockPosts
-	dateString := "2023-06-14"
-	date, _ := time.Parse("2006-01-02", dateString)
-	Id := "123"
-	Title := "title123"
-	Content := "Content123"
-	Published := true
-	ViewCount := 0
-	CreatedAt := date
-	UpdatedAt := date
+// 	data.Id = Id
+// 	data.Title = Title
+// 	data.Content = Content
+// 	data.Published = Published
+// 	data.ViewCount = ViewCount
+// 	data.CreatedAt = CreatedAt
+// 	data.UpdatedAt = UpdatedAt
 
-	data.Id = Id
-	data.Title = Title
-	data.Content = Content
-	data.Published = Published
-	data.ViewCount = ViewCount
-	data.CreatedAt = CreatedAt
-	data.UpdatedAt = UpdatedAt
+// 	return data, nil
+// }
+// func (p promotionService) DeleteCollection() (repository.MockPosts, error) {
+// 	var data repository.MockPosts
+// 	dateString := "2023-06-14"
+// 	date, _ := time.Parse("2006-01-02", dateString)
+// 	Id := "123"
+// 	Title := "title123"
+// 	Content := "Content123"
+// 	Published := true
+// 	ViewCount := 0
+// 	CreatedAt := date
+// 	UpdatedAt := date
 
-	return data, nil
-}
+// 	data.Id = Id
+// 	data.Title = Title
+// 	data.Content = Content
+// 	data.Published = Published
+// 	data.ViewCount = ViewCount
+// 	data.CreatedAt = CreatedAt
+// 	data.UpdatedAt = UpdatedAt
+
+// 	return data, nil
+// }

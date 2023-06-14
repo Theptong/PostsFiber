@@ -5,8 +5,8 @@ import (
 )
 
 type PromotionRepository interface {
-	GetPromotion() (MockPosts, error)
-	GetCollection() ([]MockPosts, error)
+	CheckCollectionById() (MockPosts, error)
+	GetCollection([]MockPosts) ([]MockPosts, error)
 	CreateCollection() (MockPosts, error)
 	// UpdateCollection(id string) (title,content string,published bool, err error)
 	// DeleteCollection(id string) ([]MockPosts, error)
