@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"fmt"
 	"workshop/structs"
 
 	"github.com/jmoiron/sqlx"
@@ -77,9 +76,6 @@ func (r customerRepositoryDB) GetByDate(id string, today string) ([]structs.Post
 
 func (r customerRepositoryDB) CreateNewCollection(title, content string, published bool) (*structs.PostsDB, error) {
 	var customers structs.PostsDB
-	fmt.Println("title::",title)
-	fmt.Println("content::",content)
-	fmt.Println("published::",published)
 	query := `INSERT INTO posts (title, content, published)
 	VALUES ($1, $2, $3)`
 	err := r.db.Get(&customers, query, title, content, published)
@@ -111,7 +107,7 @@ func (r customerRepositoryDB) DeleteCollection(id string) (*structs.PostsDB, err
 	return &customers, nil
 }
 
-func (r customerRepositoryDB) LimitCollection(Offset, Limit int) ([]structs.PostsDB,error) {
+func (r customerRepositoryDB) LimitCollection(Offset, Limit int) ([]structs.PostsDB, error) {
 	var customers []structs.PostsDB
 	query := `SELECT * FROM posts OFFSET $1 LIMIT $2`
 	err := r.db.Select(&customers, query, Offset, Limit)
@@ -120,10 +116,10 @@ func (r customerRepositoryDB) LimitCollection(Offset, Limit int) ([]structs.Post
 		return nil, err
 	}
 	return customers, nil
-	
+
 }
 
-func (r customerRepositoryDB) ViewCountCollection(ViewCount int,id string) (*structs.PostsDB, error) {
+func (r customerRepositoryDB) ViewCountCollection(ViewCount int, id string) (*structs.PostsDB, error) {
 	var customers structs.PostsDB
 	query := `update posts
 	set view_count = $1
@@ -134,5 +130,5 @@ func (r customerRepositoryDB) ViewCountCollection(ViewCount int,id string) (*str
 		return nil, err
 	}
 	return &customers, nil
-	
+
 }

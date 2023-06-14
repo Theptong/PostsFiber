@@ -25,7 +25,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
+	// defer db.Close()
 	api := app.Group("/api")
 
 	routers.SetCollectionRoutes(api, db)
